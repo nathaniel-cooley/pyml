@@ -3,6 +3,9 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 from sklearn.linear_model import SGDClassifier
 from sklearn.svm import SVC
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 
 def plot_decision_regions(X, y, classifier, test_idx=None, resolution=0.02):
     # setup marker generator and color map
@@ -38,8 +41,20 @@ def plot_decision_regions(X, y, classifier, test_idx=None, resolution=0.02):
         plt.scatter(X_test[:, 0], X_test[:, 1], 
                     c='none', edgecolor='black', alpha=1.0, marker='o', s=100, label='Test set')
 
+
+iris = datasets.load_iris()
+X  = iris.data[:, [2, 3]]  # we only take the last two features
+y = iris.target
+# Split the dataset into a training set and a test set
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1, stratify=y)
+# Standardize features by removing the mean and scaling to unit variance
+sc = StandardScaler()
+sc.fit(X_train)
+X_train_std = sc.transform(X_train)
+X_test_std = sc.transform(X_test)
+
 np.random.seed(1)
-X_xor = np.random.rand(200, 2)
+X_xor = np.random.randn(200, 2)
 y_xor = np.logical_xor(X_xor[:, 0] > 0, X_xor[:, 1] > 0)
 y_xor = np.where(y_xor, 1, 0)
 
